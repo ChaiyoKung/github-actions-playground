@@ -3,6 +3,7 @@ name: "Input Type Environment"
 on:
   workflow_dispatch:
     inputs:
+      # Input choice is dependent on the environment setup in the repository
       environment:
         type: environment
         description: "Environment to deploy to"
@@ -10,6 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Must be defined to use the environment input
     environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout code
@@ -17,5 +19,9 @@ jobs:
 
       - name: Deploy to ${{ github.event.inputs.environment }}
         run: echo "Deploying to ${{ github.event.inputs.environment }}"
+
+        # Variables and secrets depend on the selected environment
+        # If variables or secrets are not defined, it will use fallback value from repository variables and secrets instead
+        # If repository variables and secrets value is not defined, variables and secrets will be empty
       - run: echo "Variable APP_NAME=${{ vars.APP_NAME }}"
       - run: echo "Secret CONNECTION_STRING=${{ secrets.CONNECTION_STRING }}"
